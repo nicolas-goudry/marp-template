@@ -6,9 +6,11 @@ let
   lib = pkgs.lib;
 
   # Get all deck variants from ".md" files under "slides" directory
-  variants = lib.attrNames (
-    lib.filterAttrs (name: value: value == "regular" && lib.hasSuffix ".md" name) (
-      builtins.readDir ./slides
+  variants = map (name: lib.removeSuffix ".md" name) (
+    lib.attrNames (
+      lib.filterAttrs (name: value: value == "regular" && lib.hasSuffix ".md" name) (
+        builtins.readDir ./slides
+      )
     )
   );
 
@@ -75,7 +77,8 @@ let
     variant: format:
     let
       isPDF = format == "pdf";
-      outfile = "${lib.removeSuffix ".md" variant}.${format}";
+      infile = "${variant}.md";
+      outfile = "${variant}.${format}";
     in
 
     assert lib.assertMsg (
@@ -91,7 +94,7 @@ let
 
         fileset = lib.fileset.unions [
           ./assets
-          ./slides/${variant}
+          ./slides/${infile}
           ./.marprc
         ];
       };
@@ -146,7 +149,7 @@ let
           "--allow-local-files" # This is required so that PDF rendering can access assets to include in output PDF
         )
 
-        marp ''${flags[*]} slides/${variant}
+        marp ''${flags[*]} slides/${infile}
 
         runHook postBuild
       '';
@@ -172,12 +175,9 @@ in
 # Create HTML and PDF variants for all deck variants
 lib.foldl' (
   acc: variant:
-  let
-    name = lib.removeSuffix ".md" variant;
-  in
   acc
   // {
-    "${name}-html" = mkDrv variant "html";
-    "${name}-pdf" = mkDrv variant "pdf";
+    "${variant}-html" = mkDrv variant "html";
+    "${variant}-pdf" = mkDrv variant "pdf";
   }
 ) { } variants
