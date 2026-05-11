@@ -16,7 +16,7 @@ This repository provides a reproducible, Nix-powered template for generating sli
 - **slides/**: contains the Markdown source files for slide decks
 - **assets/**: stores images, fonts, and custom CSS
 - **.marprc**: global Marp configuration
-- **default.nix**: contains the core logic for building the slide decks derivations
+- **pkgs/slides.mix**: contains the core logic for building all slide decks and exposing them individually
 - **flake.nix**: defines project inputs, outputs, and supported systems
 
 ## Getting started
@@ -57,10 +57,16 @@ You can use the Marp CLI directly to preview or serve your slides:
 
 ## Building slides with Nix
 
+To build all decks and formats in a single output:
+
+```bash
+nix build '.#slides'
+```
+
 To build a specific deck and format (e.g., the English deck in PDF format), target the specific attribute:
 
 ```bash
-nix build '.#en-pdf'
+nix build '.#slides.en.pdf'
 ```
 
 The resulting files will be located in the `result/` directory.
@@ -88,6 +94,12 @@ Rendering PDFs via Marp requires running a browser. Because standard sandboxing 
 When rendering HTML format, the build system automatically copies the `assets/` directory to the derivation output directory and rewrites asset paths to ensure they are correctly resolved relative to the generated HTML file.
 
 Additionally, the Twemoji assets are copied along with the output assets to ensure fully reproducible builds.
+
+### Meta-derivation for slides
+
+All slide decks are managed through a meta-derivation in [`pkgs/slides.nix`](./pkgs/slides.nix). This derivation builds all slide decks in all supported formats (HTML and PDF) and outputs them in a single directory along with shared styling and assets.
+
+To still allow building a specific deck and format individually, the derivation exposes each combination via `passthru` attributes, making them accessible via `.#slides.<variant>.<format>`.
 
 ## License
 
