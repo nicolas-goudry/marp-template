@@ -157,11 +157,7 @@ let
 
         mkdir -p $out
         mv ${outfile} $out
-
-        if [[ "${format}" == "html" ]]; then
-          mkdir -p $out/assets/twemoji
-          cp -R assets $out
-        fi
+        [[ "${format}" == "html" ]] && cp -R assets $out
 
         runHook postInstall
       '';
