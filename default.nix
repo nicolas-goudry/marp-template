@@ -163,7 +163,7 @@ let
       '';
 
       preFixup = ''
-        substituteInPlace $out/${outfile} --replace-fail "../assets" "./assets"
+        [[ "${format}" == "html" ]] && substituteInPlace $out/${outfile} --replace-fail "../assets" "./assets"
       '';
     });
 in
