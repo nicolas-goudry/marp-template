@@ -9,7 +9,14 @@
  * @size 4:3 960px 720px
  */
 
+/* Extend default Marpit theme */
 @import "default";
+
+/*
+Import font face definitions
+NOTE: we MUST use "../assets" here since paths are not relative to the theme.css file. Instead, they are relative to
+      decks located in slides directory.
+*/
 @import url("assets/css/fonts.css");
 
 :root {
