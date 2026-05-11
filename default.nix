@@ -77,12 +77,13 @@ let
     variant: format:
     let
       isPDF = format == "pdf";
+      isHTML = format == "html";
       infile = "${variant}.md";
       outfile = "${variant}.${format}";
     in
 
     assert lib.assertMsg (
-      isPDF || format == "html"
+      isPDF || isHTML
     ) "Format must be 'html' or 'pdf'. Requested format (${format}) is invalid.";
 
     pkgs.stdenv.mkDerivation (finalAttrs: {
@@ -120,7 +121,7 @@ let
         (lib.optional isPDF [
           ./.nix-patches/.marprc.twemoji-pdf.patch
         ])
-        ++ (lib.optional (!isPDF) [
+        ++ (lib.optional isHTML [
           ./.nix-patches/.marprc.twemoji-html.patch
         ]);
 
@@ -132,36 +133,48 @@ let
       '';
 
       # Build deck to requested output format
-      buildPhase = ''
-        runHook preBuild
+      buildPhase = lib.concatLines [
+        ''
+          runHook preBuild
 
-        flags=("--output=${outfile}" "--debug=true")
-        [[ "${format}" == "pdf" ]] && flags+=(
-          "--pdf"
-          "--browser=chrome"
-          "--browser-path=${lib.getExe brave-unsdbx}"
-          "--allow-local-files" # This is required so that PDF rendering can access assets to include in output PDF
-        )
+          flags=("--output=${outfile}" "--debug=true")
+        ''
+        # When building in PDF output format, we explicitly set the Brave unsandboxed wrapper script as the browser path
+        # and we allow local files so that PDF rendering can access assets to include in the generated PDF.
+        (lib.optionalString isPDF ''
+          flags+=(
+            "--pdf"
+            "--browser=chrome"
+            "--browser-path=${lib.getExe brave-unsdbx}"
+            "--allow-local-files"
+          )
+        '')
+        ''
+          marp ''${flags[*]} slides/${infile}
 
-        marp ''${flags[*]} slides/${infile}
-
-        runHook postBuild
-      '';
+          runHook postBuild
+        ''
+      ];
 
       # Install built file(s) in output directory
-      # NOTE: PDF rendering is a single file bundling everything, while HTML requires "external" assets along it
-      installPhase = ''
-        runHook preInstall
+      installPhase = lib.concatLines [
+        ''
+          runHook preInstall
 
-        mkdir -p $out
-        mv ${outfile} $out
-        [[ "${format}" == "html" ]] && cp -R assets $out
+          mkdir -p $out
+          mv ${outfile} $out
+        ''
+        # HTML output format doesn't bundle assets like PDF does, so we copy them in the derivation output directory
+        (lib.optionalString isHTML ''
+          cp -R assets $out
+        '')
+        ''
+          runHook postInstall
+        ''
+      ];
 
-        runHook postInstall
-      '';
-
-      preFixup = ''
-        [[ "${format}" == "html" ]] && substituteInPlace $out/${outfile} --replace-fail "../assets" "./assets"
+      preFixup = lib.optionalString isHTML ''
+        substituteInPlace $out/${outfile} --replace-fail "../assets" "./assets"
       '';
     });
 in
