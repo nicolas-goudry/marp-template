@@ -194,6 +194,8 @@ let
     });
 in
 
+assert lib.assertMsg (lib.length decks > 0) "No decks found in slides/.";
+
 # Meta-derivation that builds all decks in a single output and exposes decks/formats combinations as passthru attributes.
 stdenv.mkDerivation (finalAttrs: {
   name = "slides";
