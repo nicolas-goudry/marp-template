@@ -8,40 +8,68 @@
 }:
 
 let
-  # Get all decks from ".md" files under root "slides/" directory.
-  decks = lib.filter (name: lib.hasSuffix ".md" name) (
-    map (
-      name:
-      # listFilesRecursive returns absolute paths, so we strip away the path to decks' root directory (i.e. "slides/")
-      # from the result to get relative path to decks.
-      lib.removePrefix "/" (lib.removePrefix (toString ../slides) (toString name))
-    ) (lib.filesystem.listFilesRecursive ../slides)
-  );
+  getDeckCoverName = name: "${lib.removeSuffix ".md" name}.cover.md";
+
+  # Get all decks from ".md" files under root "slides/" directory, excluding covers.
+  # NOTE: covers are either named "cover.md" or "<deck-name>.cover.md".
+  decks =
+    lib.filter (name: lib.hasSuffix ".md" name && name != "cover.md" && name != getDeckCoverName name)
+      (
+        map (
+          name:
+          # listFilesRecursive returns absolute paths, so we strip away the path to decks' root directory (i.e. "slides/")
+          # from the result to get relative path to decks.
+          lib.removePrefix "/" (lib.removePrefix (toString ../slides) (toString name))
+        ) (lib.filesystem.listFilesRecursive ../slides)
+      );
 
   mkDeck =
     deck: format:
     let
       isPDF = format == "pdf";
       isHTML = format == "html";
+      isCover = format == "cover";
+
+      dirname = lib.dirOf deck;
+      # Decks named "slides.md" are considered "self-contained": they should live in their own directory and can have
+      # a companion "cover.md" file as well as deck-specific assets in an "assets/" subdirectory.
+      # NOTE: deck-specific assets are not limited to self-contained decks, multiple decks can share deck-specific
+      #       assets if they happen to have an "assets/" directory at the same level.
+      isSelfContained = lib.hasSuffix "slides.md" deck;
+      # Compute the relative path to repository's root from deck location.
+      pathToRoot = lib.join "" (lib.map (_: "../") (lib.splitString "/" deck));
+
+      # Find deck cover:
+      # - if self-contained deck, look for "cover.md"
+      # - else look for "<deck>.cover.md"
+      # - else use deck
+      coverName = getDeckCoverName deck;
+      cover =
+        let
+          selfContainedCover = "${dirname}/cover.md";
+          deckCover = "${dirname}/${coverName}";
+        in
+        if isSelfContained && lib.pathExists ../slides/${selfContainedCover} then
+          selfContainedCover
+        else if lib.pathExists ../slides/${deckCover} then
+          deckCover
+        else
+          deck;
+
       # Compute deck name from path (used to set derivation and output file name):
       # - replace all path separators by dashes
       # - remove file extension (.md)
       # - if file is deeply nested and named "slides.md", use directory as name
       mkDeckName = name: lib.removeSuffix ".md" (lib.replaceString "/" "-" name);
-      name =
-        if lib.hasSuffix "slides.md" deck then
-          mkDeckName (lib.removeSuffix "/slides.md" deck)
-        else
-          mkDeckName deck;
-      # Compute the relative path to repository's root from deck location.
-      pathToRoot = lib.join "" (lib.map (_: "../") (lib.splitString "/" deck));
-      outfile = "${name}.${format}";
-      dirname = lib.dirOf deck;
+      name = if isSelfContained then mkDeckName dirname else mkDeckName deck;
+
+      infile = if isCover then cover else deck;
+      outfile = "${name}.${if isCover then "png" else format}";
     in
 
     assert lib.assertMsg (
-      isPDF || isHTML
-    ) "Format must be 'html' or 'pdf'. Requested format (${format}) is invalid.";
+      isPDF || isHTML || isCover
+    ) "Format must be 'html', 'pdf' or 'cover'. Requested format (${format}) is invalid.";
 
     stdenv.mkDerivation (finalAttrs: {
       name = "${name}-${format}";
@@ -52,7 +80,7 @@ let
 
         fileset = lib.fileset.unions ([
           ../assets
-          ../slides/${deck}
+          ../slides/${infile}
           # Load local marp config if it exists.
           (lib.fileset.maybeMissing ../.marprc)
           # Account for maybe missing deck-specific assets directory.
@@ -74,11 +102,11 @@ let
       ++ lib.optional isPDF brave-unsandboxed;
 
       patchPhase =
-        # PDF rendering needs assets paths to be relative to the source Markdown file:
+        # PDF/Cover rendering needs assets paths to be relative to the source Markdown file:
         # - we configure twemoji's base to be in global assets (copy is done pre-build)
         # - we patch absolute assets references to point to global assets
         # NOTE: all other assets references should already be relative to the source Markdown file.
-        (lib.optionalString isPDF ''
+        (lib.optionalString (isPDF || isCover) ''
           touch .marprc
           yq -i '. + {"options":{"emoji":{"twemoji":{"base":"${pathToRoot}assets/twemoji/"}}}}' .marprc
           shopt -s globstar
@@ -105,18 +133,19 @@ let
           # Common marp CLI flags
           flags=("--output=${outfile}" "--debug=true")
         ''
-        # When building in PDF output format, we explicitly set the Brave unsandboxed wrapper script as the browser path
-        # and we allow local files so that PDF rendering can access assets to include in the generated PDF.
-        (lib.optionalString isPDF ''
+        # When building PDFs or covers, we explicitly set the Brave unsandboxed wrapper script as the browser path and
+        # we allow local files so that rendering can access assets.
+        (lib.optionalString (isPDF || isCover) ''
           flags+=(
-            "--pdf"
             "--browser=chrome"
             "--browser-path=${lib.getExe brave-unsandboxed}"
             "--allow-local-files"
           )
         '')
+        (lib.optionalString isPDF ''flags+=("--pdf")'')
+        (lib.optionalString isCover ''flags+=("--image=png")'')
         ''
-          marp ''${flags[*]} slides/${deck}
+          marp ''${flags[*]} slides/${infile}
 
           runHook postBuild
         ''
@@ -206,7 +235,7 @@ stdenv.mkDerivation (finalAttrs: {
         deckAssets = "deck-${lib.removeSuffix "-html" deckDrv.name}";
       in
       ''
-        for deckFile in ${deckDrv}/*.{html,pdf}; do
+        for deckFile in ${deckDrv}/*.{html,pdf,png}; do
           cp $deckFile $out
 
           if [[ "$deckFile" == *.html ]] && [[ -d "${deckDrv}/assets/deck" ]]; then
@@ -248,6 +277,7 @@ stdenv.mkDerivation (finalAttrs: {
         [
           "html"
           "pdf"
+          "cover"
         ]
     )
   ) { } decks;
