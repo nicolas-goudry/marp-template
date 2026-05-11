@@ -130,11 +130,7 @@ let
       #   level. Hence we rewrite the paths to traverse up directory tree.
       # - Twemoji assets are needed BEFORE building to be included in the output PDF.
       preBuild = ''
-        if [[ "${format}" == "pdf" ]]; then
-          substituteInPlace slides/${variant} --replace-fail "./assets/" "../assets/"
-          substituteInPlace assets/css/theme.css --replace-fail "assets/" "../assets/"
-          cp -R ${twemoji} assets/twemoji
-        fi
+        cp -R ${twemoji} assets/twemoji
       '';
 
       # Build deck to requested output format
@@ -165,10 +161,13 @@ let
         if [[ "${format}" == "html" ]]; then
           mkdir -p $out/assets/twemoji
           cp -R assets $out
-          cp -R ${twemoji}/* $out/assets/twemoji
         fi
 
         runHook postInstall
+      '';
+
+      preFixup = ''
+        substituteInPlace $out/${outfile} --replace-fail "../assets" "./assets"
       '';
     });
 in
