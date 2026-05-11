@@ -1,0 +1,4 @@
+# Custom theme
+theme: assets/css/theme.css
+# Always interpret HTML tags
+html: true
