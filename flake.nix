@@ -48,5 +48,9 @@
       formatter = forEachSupportedSystem (
         pkgs: treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper
       );
+
+      devShells = forEachSupportedSystem (pkgs: {
+        default = pkgs.callPackage ./shell.nix { };
+      });
     };
 }
