@@ -124,11 +124,9 @@ let
           ./.nix-patches/.marprc.twemoji-html.patch
         ]);
 
-      # Before building, we fix assets paths when rendering PDF format and pull in twemoji assets:
-      # - Assets paths must be relative to source Markdown file in PDF format, but we share them between variants so
-      #   they are located at an upper level and referenced with "./assets" as if assets directory was at the same
-      #   level. Hence we rewrite the paths to traverse up directory tree.
-      # - Twemoji assets are needed BEFORE building to be included in the output PDF.
+      # Before building, we copy Twemoji assets so that both PDF output format and HTML can use them. PDF rendering need
+      # them before building so that they can be included in the output PDF, while HTML need them in the install phase
+      # where they are copied along with the project assets.
       preBuild = ''
         cp -R ${twemoji} assets/twemoji
       '';
