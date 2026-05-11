@@ -6,6 +6,7 @@ This repository provides a reproducible, Nix-powered template for generating sli
 
 - **Nix-powered reproducibility**: uses Nix Flakes to ensure the exact same build environment across different systems
 - **Automatic deck discovery**: the build system automatically detects all `.md` files in the `slides/` directory and generates corresponding build targets for them
+- **Automatic cover generation**: automatically generates PNG cover images from the first slide of `.md` files placed in the `covers/` directory
 - **Dual-format output**: every slide deck can be rendered into **HTML** or **PDF** format
 - **Privacy-first assets**: includes local [Twemoji](https://github.com/twitter/twemoji) assets to account for Nix build sandbox denying internet access
 - **Custom theming**: features a built-in custom CSS theme using [Catppuccin](https://catppuccin.com) Mocha color palette
@@ -14,9 +15,11 @@ This repository provides a reproducible, Nix-powered template for generating sli
 ## Project structure
 
 - **slides/**: contains the Markdown source files for slide decks
+- **covers/**: contains the Markdown source files specifically designed to generate single cover images
 - **assets/**: stores images, fonts, and custom CSS
 - **.marprc**: global Marp configuration
-- **pkgs/slides.mix**: contains the core logic for building all slide decks and exposing them individually
+- **pkgs/slides.nix**: contains the core logic for building all slide decks and exposing them individually
+- **pkgs/covers.nix**: contains the core logic for generating standalone cover images
 - **flake.nix**: defines project inputs, outputs, and supported systems
 
 ## Getting started
@@ -55,7 +58,7 @@ You can use the Marp CLI directly to preview or serve your slides:
   marp -wp slides/en.md
   ```
 
-## Building slides with Nix
+## Building slides and covers with Nix
 
 To build all decks and formats in a single output:
 
@@ -67,6 +70,18 @@ To build a specific deck and format (e.g., the English deck in PDF format), targ
 
 ```bash
 nix build '.#slides.en.pdf'
+```
+
+To build all cover images at once:
+
+```bash
+nix build '.#covers'
+```
+
+To build a specific cover image (e.g. `covers/bg.md`):
+
+```bash
+nix build '.#covers.bg'
 ```
 
 The resulting files will be located in the `result/` directory.
@@ -95,11 +110,13 @@ When rendering HTML format, the build system automatically copies the `assets/` 
 
 Additionally, the Twemoji assets are copied along with the output assets to ensure fully reproducible builds.
 
-### Meta-derivation for slides
+### Meta-derivations for slides and covers
 
 All slide decks are managed through a meta-derivation in [`pkgs/slides.nix`](./pkgs/slides.nix). This derivation builds all slide decks in all supported formats (HTML and PDF) and outputs them in a single directory along with shared styling and assets.
 
 To still allow building a specific deck and format individually, the derivation exposes each combination via `passthru` attributes, making them accessible via `.#slides.<variant>.<format>`.
+
+Similarly, covers are managed through a meta-derivation in [`pkgs/covers.nix`](./pkgs/covers.nix) which renders the covers to PDF and then extracts the first page as a PNG image using `poppler-utils`. The target images can be built all together or individually using `passthru` attributes accessible via `.#covers.<cover_name>`.
 
 ## License
 
