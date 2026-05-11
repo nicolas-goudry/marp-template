@@ -4,6 +4,7 @@
   brave-unsandboxed,
   marp-cli,
   twemoji,
+  yq-go,
 }:
 
 let
@@ -57,19 +58,18 @@ let
       nativeBuildInputs = [
         marp-cli
         twemoji
+        yq-go
       ]
       # Only pull in unsandboxed Brave browser if rendering PDF format
       ++ lib.optional isPDF brave-unsandboxed;
 
       # Patch to make Marp look for twemoji locally
       # NOTE: paths handling differs between PDF and HTML, hence different patches based on format
-      patches =
-        (lib.optional isPDF [
-          ../.nix-patches/.marprc.twemoji-pdf.patch
-        ])
-        ++ (lib.optional isHTML [
-          ../.nix-patches/.marprc.twemoji-html.patch
-        ]);
+      patchPhase = (lib.optionalString isPDF ''
+        yq -i '. + {"options":{"emoji":{"twemoji":{"base":"../assets/twemoji/"}}}}' .marprc
+      '') + (lib.optionalString isHTML ''
+        yq -i '. + {"options":{"emoji":{"twemoji":{"base":"assets/twemoji/"}}}}' .marprc
+      '');
 
       # Before building, we copy Twemoji assets so that both PDF output format and HTML can use them. PDF rendering need
       # them before building so that they can be included in the output PDF, while HTML need them in the install phase

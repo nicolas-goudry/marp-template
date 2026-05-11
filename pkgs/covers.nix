@@ -5,6 +5,7 @@
   marp-cli,
   poppler-utils,
   twemoji,
+  yq-go,
 }:
 
 let
@@ -47,12 +48,13 @@ let
       marp-cli
       poppler-utils
       twemoji
+      yq-go
     ];
 
     # Patch to make Marp look for twemoji locally
-    patches = [
-      ../.nix-patches/.marprc.twemoji-pdf.patch
-    ];
+    patchPhase = ''
+      yq -i '. + {"options":{"emoji":{"twemoji":{"base":"../assets/twemoji/"}}}}' .marprc
+    '';
 
     # Before building, we copy Twemoji assets before building so that they can be included in the output PDF.
     preBuild = ''
