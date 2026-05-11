@@ -8,25 +8,35 @@
 }:
 
 let
-  version = "1.0.0";
-
-  # Get all deck variants from ".md" files under root "slides" directory
-  variants = map (name: lib.removeSuffix ".md" name) (
-    lib.attrNames (
-      lib.filterAttrs (name: value: value == "regular" && lib.hasSuffix ".md" name) (
-        builtins.readDir ../slides
-      )
-    )
+  # Get all decks from ".md" files under root "slides/" directory.
+  decks = lib.filter (name: lib.hasSuffix ".md" name) (
+    map (
+      name:
+      # listFilesRecursive returns absolute paths, so we strip away the path to decks' root directory (i.e. "slides/")
+      # from the result to get relative path to decks.
+      lib.removePrefix "/" (lib.removePrefix (toString ../slides) (toString name))
+    ) (lib.filesystem.listFilesRecursive ../slides)
   );
 
-  # Helper function for building the deck derivation in various variants and output format
-  mkVariant =
-    variant: format:
+  mkDeck =
+    deck: format:
     let
       isPDF = format == "pdf";
       isHTML = format == "html";
-      infile = "${variant}.md";
-      outfile = "${variant}.${format}";
+      # Compute deck name from path (used to set derivation and output file name):
+      # - replace all path separators by dashes
+      # - remove file extension (.md)
+      # - if file is deeply nested and named "slides.md", use directory as name
+      mkDeckName = name: lib.removeSuffix ".md" (lib.replaceString "/" "-" name);
+      name =
+        if lib.hasSuffix "slides.md" deck then
+          mkDeckName (lib.removeSuffix "/slides.md" deck)
+        else
+          mkDeckName deck;
+      # Compute the relative path to repository's root from deck location.
+      pathToRoot = lib.join "" (lib.map (_: "../") (lib.splitString "/" deck));
+      outfile = "${name}.${format}";
+      dirname = lib.dirOf deck;
     in
 
     assert lib.assertMsg (
@@ -34,55 +44,65 @@ let
     ) "Format must be 'html' or 'pdf'. Requested format (${format}) is invalid.";
 
     stdenv.mkDerivation (finalAttrs: {
-      inherit version;
+      name = "${name}-${format}";
 
-      name = "${variant}-${format}";
-
-      # Build a custom-scoped source directory from relevant project directories
+      # Build a custom-scoped source directory from relevant project files/directories and deck path.
       src = lib.fileset.toSource {
         root = ../.;
 
-        fileset = lib.fileset.unions [
+        fileset = lib.fileset.unions ([
           ../assets
-          ../slides/${infile}
-          ../.marprc
-        ];
+          ../slides/${deck}
+          # Load local marp config if it exists.
+          (lib.fileset.maybeMissing ../.marprc)
+          # Account for maybe missing deck-specific assets directory.
+          (lib.fileset.maybeMissing ../slides/${dirname}/assets)
+        ]);
       };
 
-      # Disable fixup of twemoji assets (2K+ SVG files)
+      # Disable fixup of twemoji assets (2K+ SVG files).
       stripExclude = [
         "assets/twemoji"
       ];
 
-      # Build dependencies
       nativeBuildInputs = [
         marp-cli
         twemoji
         yq-go
       ]
-      # Only pull in unsandboxed Brave browser if rendering PDF format
+      # Only pull in unsandboxed Brave browser if rendering PDF format.
       ++ lib.optional isPDF brave-unsandboxed;
 
-      # Patch to make Marp look for twemoji locally
-      # NOTE: paths handling differs between PDF and HTML, hence different patches based on format
-      patchPhase = (lib.optionalString isPDF ''
-        yq -i '. + {"options":{"emoji":{"twemoji":{"base":"../assets/twemoji/"}}}}' .marprc
-      '') + (lib.optionalString isHTML ''
-        yq -i '. + {"options":{"emoji":{"twemoji":{"base":"assets/twemoji/"}}}}' .marprc
-      '');
-
-      # Before building, we copy Twemoji assets so that both PDF output format and HTML can use them. PDF rendering need
-      # them before building so that they can be included in the output PDF, while HTML need them in the install phase
-      # where they are copied along with the project assets.
-      preBuild = ''
-        cp -R ${twemoji} assets/twemoji
-      '';
+      patchPhase =
+        # PDF rendering needs assets paths to be relative to the source Markdown file:
+        # - we configure twemoji's base to be in global assets (copy is done pre-build)
+        # - we patch absolute assets references to point to global assets
+        # NOTE: all other assets references should already be relative to the source Markdown file.
+        (lib.optionalString isPDF ''
+          touch .marprc
+          yq -i '. + {"options":{"emoji":{"twemoji":{"base":"${pathToRoot}assets/twemoji/"}}}}' .marprc
+          shopt -s globstar
+          for css in **/*.css; do
+            sed -i 's|\([^.]\)/assets|\1${pathToRoot}assets|g; s|^/assets|${pathToRoot}assets|g' $css
+          done
+        '')
+        # HTML is rendered at root, so twemoji assets are at the same level.
+        # NOTE: we don't patch source files here to avoid having to find what to patch, instead we patch assets paths
+        #       in the install phase so that we only have to deal with the rendered HTML file.
+        + (lib.optionalString isHTML ''
+          touch .marprc
+          yq -i '. + {"options":{"emoji":{"twemoji":{"base":"assets/twemoji/"}}}}' .marprc
+        '');
 
       # Build deck to requested output format
       buildPhase = lib.concatLines [
         ''
           runHook preBuild
 
+          # Twemoji assets are required BEFORE building so that PDF rendering can include them in the rendered PDF file
+          cp -R ${twemoji} assets/twemoji
+
+          # Common marp CLI flags
           flags=("--output=${outfile}" "--debug=true")
         ''
         # When building in PDF output format, we explicitly set the Brave unsandboxed wrapper script as the browser path
@@ -96,13 +116,13 @@ let
           )
         '')
         ''
-          marp ''${flags[*]} slides/${infile}
+          marp ''${flags[*]} slides/${deck}
 
           runHook postBuild
         ''
       ];
 
-      # Install built file(s) in output directory
+      # Install built file(s) in output directory.
       installPhase = lib.concatLines [
         ''
           runHook preInstall
@@ -110,81 +130,125 @@ let
           mkdir -p $out
           mv ${outfile} $out
         ''
-        # HTML output format doesn't bundle assets like PDF does, so we copy them in the derivation output directory
+        # HTML rendering requires assets to be bundled in output and paths must be adapted consequently:
+        # - global assets are copied to root "assets/" directory
+        # - global assets paths are replaced with the new relative location to root "assets/" directory, handling both
+        #     directory-traversing paths (i.e. "../../../assets") and absolute paths (i.e. "/assets")
+        # - deck-specific assets are copied to "assets/deck" directory to avoid collisions
+        # - deck-specific assets paths (i.e. "./assets") are replaced with deck-specific assets path
         (lib.optionalString isHTML ''
+          # Copy global assets
           cp -R assets $out
+
+          # Handle deck-specific assets
+          if [[ -d "slides/${dirname}/assets" ]]; then
+            cp -R slides/${dirname}/assets $out/assets/deck
+            # Replace exact "./assets" with deck-specific assets path (i.e. "assets/deck")
+            sed -i 's|\([^.]\)\./assets|\1./assets/deck|g; s|^\./assets|./assets/deck|g' $out/${outfile}
+          fi
+
+          #######################################
+          # Handle global assets path rewriting #
+          #######################################
+
+          # Replace any number of double-dot-slash prefixes to assets by relative
+          # path to assets (i.e. "../assets" -> "./assets" / "../../../../../assets" -> "./assets")
+          sed -Ei 's|(\.\./)+assets|./assets|g' $out/${outfile}
+
+          # Replace absolute assets root path by relative path (i.e. "/assets" -> "./assets")
+          sed -i 's|\([^.]\)/assets|\1./assets|g; s|^/assets|./assets|g' $out/${outfile}
         '')
         ''
           runHook postInstall
         ''
       ];
-
-      preFixup = lib.optionalString isHTML ''
-        substituteInPlace $out/${outfile} --replace-fail "../assets" "./assets"
-      '';
-
-      passthru = {
-        inherit variant format;
-      };
     });
-
-  # Create list of derivations for all deck variants/format combinations
-  variantsDrvs = lib.flatten (
-    lib.map (
-      variant:
-      lib.map (format: mkVariant variant format) [
-        "html"
-        "pdf"
-      ]
-    ) variants
-  );
 in
 
-# Meta-derivation that builds all deck variants/format combinations in a single output and exposes single variants as
-# passthru attributes.
+# Meta-derivation that builds all decks in a single output and exposes decks/formats combinations as passthru attributes.
 stdenv.mkDerivation (finalAttrs: {
-  inherit version;
-
   name = "slides";
-  # This is a "meta-derivation", there's no source
-  src = null;
-  dontUnpack = true;
+
+  # We only care about the global assets directory here.
+  src = lib.fileset.toSource {
+    root = ../.;
+    fileset = lib.fileset.unions ([ ../assets ]);
+  };
   dontConfigure = true;
   dontBuild = true;
   dontFixup = true;
 
-  buildInputs = variantsDrvs;
+  # Flat list of derivations produced in the passthru attribute (i.e. all deck derivations).
+  buildInputs = lib.mapAttrsToListRecursiveCond (
+    _: value: lib.isAttrs value && (!lib.isDerivation value)
+  ) (_: value: value) finalAttrs.passthru;
 
-  # The final output will contain all variants generated files and a common assets directory
+  # The final output will contain all decks generated files and a common assets directory.
   #
   # The installation process is as follows:
-  # - copy assets from the first variant: all variants share the same assets so we don't care, we take the first one
-  # - for each variant derivation, copy the output file identified by <variant>.<format>
+  # - copy global assets to root "assets/" directory
+  # - copy twemoji assets to "assets/twemoji"
+  # - iterate over all decks generated formats to:
+  #   - copy its main file
+  #   - copy deck-specific assets to "assets/deck-<deck-name>"
+  #   - patch paths to deck-specific assets to point to the new location
   installPhase = lib.concatLines (
     [
       ''
         mkdir -p $out
-        cp -R ${lib.elemAt variantsDrvs 0}/assets $out
+        cp -R assets $out
+        cp -R ${twemoji} $out/assets/twemoji
       ''
     ]
-    ++ (lib.map (variantDrv: ''
-      cp ${variantDrv}/${variantDrv.passthru.variant}.${variantDrv.passthru.format} $out
-    '') variantsDrvs)
+    ++ (lib.map (
+      deckDrv:
+      let
+        deckAssets = "deck-${lib.removeSuffix "-html" deckDrv.name}";
+      in
+      ''
+        for deckFile in ${deckDrv}/*.{html,pdf}; do
+          cp $deckFile $out
+
+          if [[ "$deckFile" == *.html ]] && [[ -d "${deckDrv}/assets/deck" ]]; then
+            cp -R ${deckDrv}/assets/deck $out/assets/${deckAssets}
+            substituteInPlace "$out/$(basename "$deckFile")" --replace-warn assets/deck assets/${deckAssets}
+          fi
+        done
+      ''
+    ) finalAttrs.buildInputs)
   );
 
-  # All variants are exposed as passthru attributes to allow building them one-by-one. All variants get a dedicated
-  # attribute set with attributes for each output format, like below:
-  # { <variant> = { <format1> = drv; <format2> = drv; }; }
-  # This allows building a single variant in a given format with: nix build '.#slides.<variant>.<format>'
+  # All decks are exposed as passthru attributes to allow building them one-by-one. All decks get a dedicated nested
+  # attribute, following the directory tree, which is itself an attribute set matching output formats. Examples:
+  # - given a deck located in foo/bar/baz.md, the deck is exposed as 'slides.foo.bar.baz.{html,pdf}'
+  # - given a deck located in foo/bar/baz/slides.md, the deck is exposed as 'slides.foo.bar.baz.{html,pdf}'
+  #
+  # NOTE: deeply nested decks override upper ones, so if both previous examples were to exist at the same time, only
+  #       foo/bar/baz/slides.md would be available. Similarly, if foo/bar.md or foo/bar/slides.md would exist in
+  #       filesystem at the same time, they would not be avalaible for build.
   passthru = lib.foldl' (
-    acc: variant:
-    acc
-    // {
-      ${variant} = lib.listToAttrs (
-        lib.map (variantDrv: lib.nameValuePair variantDrv.passthru.format variantDrv) (
-          lib.filter (variantDrv: variantDrv.passthru.variant == variant) variantsDrvs
+    acc: deck:
+    lib.recursiveUpdate acc (
+      lib.foldl'
+        (
+          acc': format:
+          lib.recursiveUpdate acc' (
+            lib.setAttrByPath (
+              (lib.splitString "/" (
+                if lib.hasSuffix "slides.md" deck then
+                  lib.removeSuffix "/slides.md" deck
+                else
+                  (lib.removeSuffix ".md" deck)
+              ))
+              ++ [ format ]
+            ) (mkDeck deck format)
+          )
         )
-      );
-    }
-  ) { } variants;
+        { }
+        [
+          "html"
+          "pdf"
+        ]
+    )
+  ) { } decks;
 })
