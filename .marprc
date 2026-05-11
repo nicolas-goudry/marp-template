@@ -1,4 +1,6 @@
-# Custom theme
-theme: assets/css/theme.css
+# Available themes
+themeSet:
+  - assets/css
+  - assets/themes
 # Always interpret HTML tags
 html: true

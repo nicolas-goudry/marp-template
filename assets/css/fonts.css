@@ -1,119 +1,121 @@
-/*!
- * Font faces definitions.
- *
- * @theme my-custom-theme
- * @author Nicolas Goudry
- */
+/*! @theme ubuntu-fonts */
+
+.markdown-body,
+section {
+  --fontStack-sansSerif: "Ubuntu Sans";
+  --fontStack-monospace: "Ubuntu Mono";
+  font-family: var(--fontStack-sansSerif);
+}
 
 /* Ubuntu Sans */
 
 @font-face {
-  src: url("../fonts/UbuntuSans-Thin.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-Thin.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 100;
   font-style: normal;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-ThinItalic.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-ThinItalic.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 100;
   font-style: italic;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-ExtraLight.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-ExtraLight.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 200;
   font-style: normal;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-ExtraLightItalic.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-ExtraLightItalic.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 200;
   font-style: italic;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-Light.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-Light.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 300;
   font-style: normal;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-LightItalic.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-LightItalic.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 300;
   font-style: italic;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-Regular.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-Regular.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-Italic.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-Italic.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 400;
   font-style: italic;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-Medium.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-Medium.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-MediumItalic.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-MediumItalic.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 500;
   font-style: italic;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-SemiBold.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-SemiBold.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-SemiBoldItalic.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-SemiBoldItalic.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 600;
   font-style: italic;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-Bold.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-Bold.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-BoldItalic.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-BoldItalic.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 700;
   font-style: italic;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-ExtraBold.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-ExtraBold.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 800;
   font-style: normal;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuSans-ExtraBoldItalic.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuSans-ExtraBoldItalic.ttf") format("truetype");
   font-family: "Ubuntu Sans";
   font-weight: 800;
   font-style: italic;
@@ -122,28 +124,28 @@
 /* Ubuntu Mono */
 
 @font-face {
-  src: url("../fonts/UbuntuMono-Regular.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuMono-Regular.ttf") format("truetype");
   font-family: "Ubuntu Mono";
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuMono-Italic.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuMono-Italic.ttf") format("truetype");
   font-family: "Ubuntu Mono";
   font-weight: 400;
   font-style: italic;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuMono-Bold.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuMono-Bold.ttf") format("truetype");
   font-family: "Ubuntu Mono";
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
-  src: url("../fonts/UbuntuMono-BoldItalic.ttf") format("truetype");
+  src: url("/assets/fonts/UbuntuMono-BoldItalic.ttf") format("truetype");
   font-family: "Ubuntu Mono";
   font-weight: 700;
   font-style: italic;
