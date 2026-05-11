@@ -49,6 +49,8 @@
         pkgs: treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper
       );
 
+      packages = forEachSupportedSystem (pkgs: import ./. { inherit pkgs; });
+
       devShells = forEachSupportedSystem (pkgs: {
         default = pkgs.callPackage ./shell.nix { };
       });

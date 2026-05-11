@@ -1,0 +1,12 @@
+diff --git a/.marprc b/.marprc
+index 7c0ca19..9d43955 100644
+--- a/.marprc
++++ b/.marprc
+@@ -2,3 +2,7 @@
+ theme: assets/css/theme.css
+ # Always interpret HTML tags
+ html: true
++options:
++  emoji:
++    twemoji:
++      base: assets/twemoji/
