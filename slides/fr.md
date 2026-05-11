@@ -65,7 +65,7 @@ _paginate: skip
 footer: ""
 -->
 
-![bg](./assets/images/bg/main-cover.png)
+![bg](../assets/images/bg/main-cover.png)
 
 <div class="title-container">
 
@@ -106,7 +106,7 @@ _paginate: skip
 footer: ""
 -->
 
-![bg grayscale left:33%](./assets/images/misc/portrait.png)
+![bg grayscale left:33%](../assets/images/misc/portrait.png)
 
 # Nicolas Goudry
 
@@ -119,6 +119,6 @@ footer: ""
 
 <div class="company-logo">
 
-![grayscale invert brightness:1.2](./assets/images/logos/sciam.webp)
+![grayscale invert brightness:1.2](../assets/images/logos/sciam.webp)
 
 </div>
