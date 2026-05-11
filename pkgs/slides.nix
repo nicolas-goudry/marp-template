@@ -1,79 +1,25 @@
 {
-  pkgs ? import <nixpkgs> { },
+  lib,
+  stdenv,
+  brave-unsandboxed,
+  marp-cli,
+  twemoji,
 }:
 
 let
-  lib = pkgs.lib;
+  version = "1.0.0";
 
-  # Get all deck variants from ".md" files under "slides" directory
+  # Get all deck variants from ".md" files under root "slides" directory
   variants = map (name: lib.removeSuffix ".md" name) (
     lib.attrNames (
       lib.filterAttrs (name: value: value == "regular" && lib.hasSuffix ".md" name) (
-        builtins.readDir ./slides
+        builtins.readDir ../slides
       )
     )
   );
 
-  # Wrapper script to disable Brave sandboxing
-  # This is required so that Marp can actually run a browser from inside the Nix sandbox.
-  # We disable:
-  # - sandboxing (--no-sandbox and --disable-setuid-sandbox): sandboxing is not available in Nix build sandbox
-  # - GPU (--disable-gpu)
-  # - shared memory usage (--disable-dev-shm-usage): prefer temporary files
-  brave-unsdbx =
-    let
-      name = "brave-unsandboxed";
-    in
-    pkgs.runCommandLocal name
-      {
-        nativeBuildInputs = with pkgs; [
-          makeWrapper
-          brave
-        ];
-
-        meta.mainProgram = name;
-      }
-      ''
-        mkdir -p $out/bin
-
-        cat > $out/bin/${name} <<'EOF'
-        #!/bin/sh
-        exec ${lib.getExe pkgs.brave} --no-sandbox --disable-setuid-sandbox --disable-gpu --disable-dev-shm-usage "$@"
-        EOF
-
-        chmod +x $out/bin/${name}
-      '';
-
-  # In-store twemoji assets to avoid referencing an online CDN
-  # TODO: decide if this should be upstreamed into nixpkgs
-  twemoji = pkgs.stdenv.mkDerivation (finalAttrs: {
-    name = "twemoji";
-    version = "14.0.3";
-
-    src = pkgs.fetchFromGitHub {
-      owner = "twitter";
-      repo = "twemoji";
-      rev = "v${finalAttrs.version}";
-      hash = "sha256-wIjdsl/bnmlF8i/qHmJI+YBurXieLFVa5CBzG++OIlw=";
-    };
-
-    dontPatch = true;
-    dontConfigure = true;
-    dontFixup = true;
-    dontBuild = true;
-
-    installPhase = ''
-      runHook preInstall
-
-      mkdir -p $out
-      cp -R assets/* $out
-
-      runHook postInstall
-    '';
-  });
-
   # Helper function for building the deck derivation in various variants and output format
-  mkDrv =
+  mkVariant =
     variant: format:
     let
       isPDF = format == "pdf";
@@ -86,17 +32,19 @@ let
       isPDF || isHTML
     ) "Format must be 'html' or 'pdf'. Requested format (${format}) is invalid.";
 
-    pkgs.stdenv.mkDerivation (finalAttrs: {
+    stdenv.mkDerivation (finalAttrs: {
+      inherit version;
+
       name = "${variant}-${format}";
 
       # Build a custom-scoped source directory from relevant project directories
       src = lib.fileset.toSource {
-        root = ./.;
+        root = ../.;
 
         fileset = lib.fileset.unions [
-          ./assets
-          ./slides/${infile}
-          ./.marprc
+          ../assets
+          ../slides/${infile}
+          ../.marprc
         ];
       };
 
@@ -106,23 +54,21 @@ let
       ];
 
       # Build dependencies
-      nativeBuildInputs =
-        with pkgs;
-        [
-          marp-cli
-          twemoji
-        ]
-        # Only pull in unsandboxed Brave browser if rendering PDF format
-        ++ lib.optional isPDF brave-unsdbx;
+      nativeBuildInputs = [
+        marp-cli
+        twemoji
+      ]
+      # Only pull in unsandboxed Brave browser if rendering PDF format
+      ++ lib.optional isPDF brave-unsandboxed;
 
       # Patch to make Marp look for twemoji locally
       # NOTE: paths handling differs between PDF and HTML, hence different patches based on format
       patches =
         (lib.optional isPDF [
-          ./.nix-patches/.marprc.twemoji-pdf.patch
+          ../.nix-patches/.marprc.twemoji-pdf.patch
         ])
         ++ (lib.optional isHTML [
-          ./.nix-patches/.marprc.twemoji-html.patch
+          ../.nix-patches/.marprc.twemoji-html.patch
         ]);
 
       # Before building, we copy Twemoji assets so that both PDF output format and HTML can use them. PDF rendering need
@@ -145,7 +91,7 @@ let
           flags+=(
             "--pdf"
             "--browser=chrome"
-            "--browser-path=${lib.getExe brave-unsdbx}"
+            "--browser-path=${lib.getExe brave-unsandboxed}"
             "--allow-local-files"
           )
         '')
@@ -176,14 +122,69 @@ let
       preFixup = lib.optionalString isHTML ''
         substituteInPlace $out/${outfile} --replace-fail "../assets" "./assets"
       '';
+
+      passthru = {
+        inherit variant format;
+      };
     });
+
+  # Create list of derivations for all deck variants/format combinations
+  variantsDrvs = lib.flatten (
+    lib.map (
+      variant:
+      lib.map (format: mkVariant variant format) [
+        "html"
+        "pdf"
+      ]
+    ) variants
+  );
 in
-# Create HTML and PDF variants for all deck variants
-lib.foldl' (
-  acc: variant:
-  acc
-  // {
-    "${variant}-html" = mkDrv variant "html";
-    "${variant}-pdf" = mkDrv variant "pdf";
-  }
-) { } variants
+
+# Meta-derivation that builds all deck variants/format combinations in a single output and exposes single variants as
+# passthru attributes.
+stdenv.mkDerivation (finalAttrs: {
+  inherit version;
+
+  name = "slides";
+  # This is a "meta-derivation", there's no source
+  src = null;
+  dontUnpack = true;
+  dontConfigure = true;
+  dontBuild = true;
+  dontFixup = true;
+
+  buildInputs = variantsDrvs;
+
+  # The final output will contain all variants generated files and a common assets directory
+  #
+  # The installation process is as follows:
+  # - copy assets from the first variant: all variants share the same assets so we don't care, we take the first one
+  # - for each variant derivation, copy the output file identified by <variant>.<format>
+  installPhase = lib.concatLines (
+    [
+      ''
+        mkdir -p $out
+        cp -R ${lib.elemAt variantsDrvs 0}/assets $out
+      ''
+    ]
+    ++ (lib.map (variantDrv: ''
+      cp ${variantDrv}/${variantDrv.passthru.variant}.${variantDrv.passthru.format} $out
+    '') variantsDrvs)
+  );
+
+  # All variants are exposed as passthru attributes to allow building them one-by-one. All variants get a dedicated
+  # attribute set with attributes for each output format, like below:
+  # { <variant> = { <format1> = drv; <format2> = drv; }; }
+  # This allows building a single variant in a given format with: nix build '.#slides.<variant>.<format>'
+  passthru = lib.foldl' (
+    acc: variant:
+    acc
+    // {
+      ${variant} = lib.listToAttrs (
+        lib.map (variantDrv: lib.nameValuePair variantDrv.passthru.format variantDrv) (
+          lib.filter (variantDrv: variantDrv.passthru.variant == variant) variantsDrvs
+        )
+      );
+    }
+  ) { } variants;
+})

@@ -19,6 +19,7 @@
     }@inputs:
     let
       inherit (inputs.nixpkgs) lib;
+      inherit (self) outputs;
 
       supportedSystems = [
         "x86_64-linux"
@@ -49,7 +50,14 @@
         pkgs: treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper
       );
 
-      packages = forEachSupportedSystem (pkgs: import ./. { inherit pkgs; });
+      packages = forEachSupportedSystem (
+        pkgs:
+        lib.packagesFromDirectoryRecursive {
+          directory = ./pkgs;
+          # We create a new scope to expose packages to themselves (beware of infinite recursion!)
+          callPackage = pkgs.newScope outputs.packages.${pkgs.stdenv.hostPlatform.system};
+        }
+      );
 
       devShells = forEachSupportedSystem (pkgs: {
         default = pkgs.callPackage ./shell.nix { };
