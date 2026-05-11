@@ -27,9 +27,7 @@ stdenv.mkDerivation (finalAttrs: {
     runHook preInstall
 
     mkdir -p $out/bin
-
-    cp ${brave}/bin/brave $out/bin/${finalAttrs.name}
-    wrapProgram $out/bin/${finalAttrs.name} \
+    makeWrapper ${lib.getExe brave} $out/bin/${finalAttrs.name} \
       --add-flag "--no-sandbox" \
       --add-flag "--disable-setuid-sandbox" \
       --add-flag "--disable-gpu" \
