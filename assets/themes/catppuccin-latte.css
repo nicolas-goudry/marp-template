@@ -2,7 +2,7 @@
 /*!
  * Soothing pastel theme for Marp / Marpit.
  *
- * @theme catppuccin-mocha
+ * @theme catppuccin-latte
  * @author Nicolas Goudry
  *
  * @auto-scaling true
@@ -11,239 +11,239 @@
  */
 @import-theme "default";
 &.hljs {
-  color: #cdd6f4;
-  background: #1e1e2e;
+  color: #4c4f69;
+  background: #eff1f5;
 }
 
 .hljs-keyword {
-  color: #cba6f7;
+  color: #8839ef;
 }
 
 .hljs-built_in {
-  color: #f38ba8;
+  color: #d20f39;
 }
 
 .hljs-type {
-  color: #f9e2af;
+  color: #df8e1d;
 }
 
 .hljs-literal {
-  color: #fab387;
+  color: #fe640b;
 }
 
 .hljs-number {
-  color: #fab387;
+  color: #fe640b;
 }
 
 .hljs-operator {
-  color: #89dceb;
+  color: #04a5e5;
 }
 
 .hljs-punctuation {
-  color: #bac2de;
+  color: #5c5f77;
 }
 
 .hljs-property {
-  color: #94e2d5;
+  color: #179299;
 }
 
 .hljs-regexp {
-  color: #f5c2e7;
+  color: #ea76cb;
 }
 
 .hljs-string {
-  color: #a6e3a1;
+  color: #40a02b;
 }
 
 .hljs-char.escape_ {
-  color: #a6e3a1;
+  color: #40a02b;
 }
 
 .hljs-subst {
-  color: #a6adc8;
+  color: #6c6f85;
 }
 
 .hljs-symbol {
-  color: #f2cdcd;
+  color: #dd7878;
 }
 
 .hljs-variable {
-  color: #cba6f7;
+  color: #8839ef;
 }
 
 .hljs-variable.language_ {
-  color: #cba6f7;
+  color: #8839ef;
 }
 
 .hljs-variable.constant_ {
-  color: #fab387;
+  color: #fe640b;
 }
 
 .hljs-title {
-  color: #89b4fa;
+  color: #1e66f5;
 }
 
 .hljs-title.class_ {
-  color: #f9e2af;
+  color: #df8e1d;
 }
 
 .hljs-title.function_ {
-  color: #89b4fa;
+  color: #1e66f5;
 }
 
 .hljs-params {
-  color: #cdd6f4;
+  color: #4c4f69;
 }
 
 .hljs-comment {
-  color: #9399b2;
+  color: #7c7f93;
 }
 
 .hljs-doctag {
-  color: #f38ba8;
+  color: #d20f39;
 }
 
 .hljs-meta {
-  color: #fab387;
+  color: #fe640b;
 }
 
 .hljs-section {
-  color: #89b4fa;
+  color: #1e66f5;
 }
 
 .hljs-tag {
-  color: #94e2d5;
+  color: #179299;
 }
 
 .hljs-name {
-  color: #cba6f7;
+  color: #8839ef;
 }
 
 .hljs-attr {
-  color: #89b4fa;
+  color: #1e66f5;
 }
 
 .hljs-attribute {
-  color: #a6e3a1;
+  color: #40a02b;
 }
 
 .hljs-bullet {
-  color: #94e2d5;
+  color: #179299;
 }
 
 .hljs-code {
-  color: #a6e3a1;
+  color: #40a02b;
 }
 
 .hljs-emphasis {
-  color: #f38ba8;
+  color: #d20f39;
   font-style: italic;
 }
 
 .hljs-strong {
-  color: #f38ba8;
+  color: #d20f39;
   font-weight: bold;
 }
 
 .hljs-formula {
-  color: #94e2d5;
+  color: #179299;
 }
 
 .hljs-link {
-  color: #74c7ec;
+  color: #209fb5;
   font-style: italic;
 }
 
 .hljs-quote {
-  color: #a6e3a1;
+  color: #40a02b;
   font-style: italic;
 }
 
 .hljs-selector-tag {
-  color: #f9e2af;
+  color: #df8e1d;
 }
 
 .hljs-selector-id {
-  color: #89b4fa;
+  color: #1e66f5;
 }
 
 .hljs-selector-class {
-  color: #94e2d5;
+  color: #179299;
 }
 
 .hljs-selector-attr {
-  color: #cba6f7;
+  color: #8839ef;
 }
 
 .hljs-selector-pseudo {
-  color: #94e2d5;
+  color: #179299;
 }
 
 .hljs-template-tag {
-  color: #f2cdcd;
+  color: #dd7878;
 }
 
 .hljs-template-variable {
-  color: #f2cdcd;
+  color: #dd7878;
 }
 
 .hljs-addition {
-  color: #a6e3a1;
-  background: rgba(166, 227, 161, 0.15);
+  color: #40a02b;
+  background: rgba(64, 160, 43, 0.15);
 }
 
 .hljs-deletion {
-  color: #f38ba8;
-  background: rgba(243, 139, 168, 0.15);
+  color: #d20f39;
+  background: rgba(210, 15, 57, 0.15);
 }
 
 :root {
   /* github-markdown-css variables */
-  --bgColor-attention-muted: rgba(250, 179, 135, 0.15);
-  --bgColor-default: #1e1e2e;
-  --bgColor-muted: #313244;
-  --bgColor-neutral-muted: #6c7086;
-  --borderColor-accent-emphasis: #f38ba8;
-  --borderColor-attention-emphasis: #fab387;
-  --borderColor-danger-emphasis: #f38ba8;
-  --borderColor-default: #313244;
-  --borderColor-done-emphasis: #cba6f7;
-  --borderColor-muted: #313244;
-  --borderColor-success-emphasis: #a6e3a1;
-  --fgColor-accent: #f38ba8;
-  --fgColor-attention: #f9e2af;
-  --fgColor-danger: #f38ba8;
-  --fgColor-default: #cdd6f4;
-  --fgColor-done: #cba6f7;
-  --fgColor-muted: #bac2de;
-  --fgColor-success: #a6e3a1;
+  --bgColor-attention-muted: rgba(254, 100, 11, 0.15);
+  --bgColor-default: #eff1f5;
+  --bgColor-muted: #ccd0da;
+  --bgColor-neutral-muted: #9ca0b0;
+  --borderColor-accent-emphasis: #d20f39;
+  --borderColor-attention-emphasis: #fe640b;
+  --borderColor-danger-emphasis: #d20f39;
+  --borderColor-default: #ccd0da;
+  --borderColor-done-emphasis: #8839ef;
+  --borderColor-muted: #ccd0da;
+  --borderColor-success-emphasis: #40a02b;
+  --fgColor-accent: #d20f39;
+  --fgColor-attention: #df8e1d;
+  --fgColor-danger: #d20f39;
+  --fgColor-default: #4c4f69;
+  --fgColor-done: #8839ef;
+  --fgColor-muted: #5c5f77;
+  --fgColor-success: #40a02b;
   /* Marp default theme variables */
-  --h1-color: #f38ba8;
-  --header-footer-color: #45475a;
-  --heading-strong-color: #f38ba8;
-  --paginate-color: #6c7086;
+  --h1-color: #d20f39;
+  --header-footer-color: #bcc0cc;
+  --heading-strong-color: #d20f39;
+  --paginate-color: #9ca0b0;
 }
 
 section h1 {
-  color: #f38ba8;
+  color: #d20f39;
 }
 section h2 {
-  color: #fab387;
+  color: #fe640b;
 }
 section h3 {
-  color: #f9e2af;
+  color: #df8e1d;
 }
 section h4 {
-  color: #a6e3a1;
+  color: #40a02b;
 }
 section h5 {
-  color: #74c7ec;
+  color: #209fb5;
 }
 section h6 {
-  color: #b4befe;
+  color: #7287fd;
 }
 section a {
-  color: #89b4fa;
+  color: #1e66f5;
 }
 section table thead th {
   background: var(--bgColor-muted);
@@ -255,10 +255,10 @@ section table tbody > tr:nth-child(2n) th {
   color: var(--fgColor-default);
 }
 section .markdown-alert.markdown-alert-note {
-  border-left-color: #89b4fa;
+  border-left-color: #1e66f5;
 }
 section .markdown-alert.markdown-alert-note .markdown-alert-title {
-  color: #89b4fa;
+  color: #1e66f5;
 }
 section {
   /* Lead class taken from Marp builtin Gaia theme */
