@@ -79,7 +79,7 @@ cd marp-deck-directory
 nix develop # or simply `cd` here if direnv is set up (see previous section)
 
 # 3. Start the live-reload Marp server
-marp --server .
+serve
 ```
 
 Open [http://localhost:8080](http://localhost:8080): Marp serves an index of every deck under `slides/` and reloads on save.
@@ -219,7 +219,7 @@ A slide about nothing in particular.
 EOF
 ```
 
-Run `marp --server .` and open [http://localhost:8080](http://localhost:8080): your deck is live.
+Run `serve` (or `marp --server .`) and open [http://localhost:8080](http://localhost:8080): your deck is live.
 
 ### Marp syntax cheatsheet
 
@@ -306,7 +306,8 @@ nix build .#slides.2026.q4-keynote.pdf
 Inside `nix develop`:
 
 ```bash
-marp --server .                 # Browse every deck at http://localhost:8080
+# Browse every deck at http://localhost:8080
+serve
 ```
 
 ### Format the codebase
