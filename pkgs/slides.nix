@@ -13,15 +13,17 @@ let
   # Get all decks from ".md" files under root "slides/" directory, excluding covers.
   # NOTE: covers are either named "cover.md" or "<deck-name>.cover.md".
   decks =
-    lib.filter (name: lib.hasSuffix ".md" name && name != "cover.md" && name != getDeckCoverName name)
-      (
+    if lib.pathExists ../slides then
+      lib.filter (name: lib.hasSuffix ".md" name && name != "cover.md" && name != getDeckCoverName name) (
         map (
           name:
           # listFilesRecursive returns absolute paths, so we strip away the path to decks' root directory (i.e. "slides/")
           # from the result to get relative path to decks.
           lib.removePrefix "/" (lib.removePrefix (toString ../slides) (toString name))
         ) (lib.filesystem.listFilesRecursive ../slides)
-      );
+      )
+    else
+      [ ];
 
   mkDeck =
     deck: format:
