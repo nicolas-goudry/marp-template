@@ -13,8 +13,9 @@
 @import "ubuntu-fonts";
 
 /* Make slide content start at top */
-section {
-  place-content: safe start center;
+section:not(:where(.lead)) {
+  display: flex;
+  place-content: safe start;
 }
 
 /* Customize code blocks to give them a scrollbar and prevent overflow */
