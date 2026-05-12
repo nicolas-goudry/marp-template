@@ -1,5 +1,7 @@
 # Marp Deck Directory
 
+![Intro cover](./.github/assets/intro.png)
+
 > **A zero-config, fully reproducible presentation environment** powered by [Marp](https://marp.app/) and [Nix](https://nixos.org/).
 >
 > 1. Write slides in Markdown
