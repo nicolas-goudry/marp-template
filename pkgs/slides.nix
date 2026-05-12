@@ -145,6 +145,7 @@ let
         (lib.optionalString isPDF ''flags+=("--pdf")'')
         (lib.optionalString isCover ''flags+=("--image=png")'')
         ''
+          HOME=$TMPDIR
           marp ''${flags[*]} slides/${infile}
 
           runHook postBuild
