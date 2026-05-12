@@ -1,7 +1,6 @@
 {
   lib,
   stdenv,
-  runCommandLocal,
   makeWrapper,
   brave,
 }:
