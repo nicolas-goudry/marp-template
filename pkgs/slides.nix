@@ -78,14 +78,14 @@ let
       src = lib.fileset.toSource {
         root = ../.;
 
-        fileset = lib.fileset.unions ([
+        fileset = lib.fileset.unions [
           ../assets
           ../slides/${infile}
           # Load local marp config if it exists.
           (lib.fileset.maybeMissing ../.marprc)
           # Account for maybe missing deck-specific assets directory.
           (lib.fileset.maybeMissing ../slides/${dirname}/assets)
-        ]);
+        ];
       };
 
       # Disable fixup of twemoji assets (2K+ SVG files).
@@ -204,7 +204,7 @@ stdenv.mkDerivation (finalAttrs: {
   # We only care about the global assets directory here.
   src = lib.fileset.toSource {
     root = ../.;
-    fileset = lib.fileset.unions ([ ../assets ]);
+    fileset = lib.fileset.unions [ ../assets ];
   };
   dontConfigure = true;
   dontBuild = true;
@@ -257,7 +257,7 @@ stdenv.mkDerivation (finalAttrs: {
   #
   # NOTE: deeply nested decks override upper ones, so if both previous examples were to exist at the same time, only
   #       foo/bar/baz/slides.md would be available. Similarly, if foo/bar.md or foo/bar/slides.md would exist in
-  #       filesystem at the same time, they would not be avalaible for build.
+  #       filesystem at the same time, they would not be available for build.
   passthru = lib.foldl' (
     acc: deck:
     lib.recursiveUpdate acc (

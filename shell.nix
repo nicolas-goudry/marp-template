@@ -20,11 +20,13 @@ let
   };
 in
 pkgs.mkShellNoCC {
-  nativeBuildInputs = (with pkgs; [
-    marp-cli
-  ]) ++ [
-    serve
-  ];
+  nativeBuildInputs =
+    (with pkgs; [
+      marp-cli
+    ])
+    ++ [
+      serve
+    ];
 
   shellHook = ''
     echo
