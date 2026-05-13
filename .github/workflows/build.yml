@@ -1,0 +1,76 @@
+name: Build slides and deploy to GitHub Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths: &path_trigger
+      - ".github/workflows/build.yml"
+      - "pkgs/*.nix"
+      - "slides/**/*"
+      - "flake.nix"
+      - "flake.lock"
+  pull_request:
+    paths: *path_trigger
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: wimpysworld/nothing-but-nix@main
+        with:
+          hatchet-protocol: holster
+      - uses: DeterminateSystems/nix-installer-action@main
+      - name: Check formatting
+        run: >
+          { nix fmt || true; } && git --no-pager diff --exit-code
+
+  build:
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: wimpysworld/nothing-but-nix@main
+        with:
+          hatchet-protocol: holster
+      - uses: DeterminateSystems/nix-installer-action@main
+      - name: Build decks
+        run: nix build .#slides
+      - name: Upload build result
+        uses: actions/upload-artifact@v7
+        with:
+          name: decks
+          path: result
+
+  deploy:
+    needs: build
+    if: success() && github.ref_name == 'main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      pages: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Retrieve build result
+        uses: actions/download-artifact@v8
+        with:
+          name: decks
+          path: result
+      - name: Prepare static assets to deploy
+        run: |
+          mkdir -p dist
+          cp result/intro.html dist/index.html
+          cp -R result/assets dist
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+      - uses: actions/deploy-pages@v5
