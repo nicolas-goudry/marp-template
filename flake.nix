@@ -1,5 +1,5 @@
 {
-  description = "Marpit Slides Template";
+  description = "Marp Deck Directory";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
