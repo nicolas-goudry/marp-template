@@ -11,16 +11,26 @@ theme: custom-theme
 paginate: true
 # Transitions documentation: https://github.com/marp-team/marp-cli/blob/v4.3.1/docs/bespoke-transitions/README.md
 transition: coverflow
-footer: Marp Deck Directory - Introduction
+header: Marp Deck Directory - Introduction
+footer: |
+  [View project on GitHub](https://github.com/nicolas-goudry/marp-deck-directory)
 ---
+
+<style scoped>
+  h1 a {
+    color: inherit;
+    text-decoration: underline;
+  }
+</style>
 
 <!--
 _class: lead
 _paginate: false
+_header: ""
 _footer: ""
 -->
 
-# Marp Deck Directory
+# [Marp Deck Directory](https://github.com/nicolas-goudry/marp-deck-directory)
 
 ## A zero-config, fully reproducible presentation environment.
 
@@ -131,13 +141,19 @@ To customize, drop your own CSS or fonts in `assets/` and update your theme.
 
 ---
 
-<!-- _class: lead -->
+<!--
+_class: lead
+_paginate: false
+_header: ""
+_footer: ""
+-->
 
 # Ready to present?
 
-Clone the repository, drop into the shell, and start writing.
+Clone the [repository](https://github.com/nicolas-goudry/marp-deck-directory), drop into the shell, and start writing.
 
 ```bash
+git clone https://github.com/nicolas-goudry/marp-deck-directory.git
 nix develop
 serve
 ```
