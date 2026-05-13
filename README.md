@@ -279,8 +279,10 @@ All builds go through Nix. There is no Makefile by design. The flake exposes eve
 ### Build everything
 
 ```bash
-nix build .#slides
+nix build '.#slides'
 ```
+
+![Build all decks](./.github/assets/nix-build.gif)
 
 The `result/` symlink contains:
 
