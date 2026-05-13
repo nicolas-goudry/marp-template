@@ -56,6 +56,8 @@ direnv allow
 
 From then on, `cd`-ing into the project replaces `nix develop` entirely.
 
+![Automatic devshell](./.github/assets/direnv-showoff.gif)
+
 ### Supported Platforms
 
 The flake targets:
