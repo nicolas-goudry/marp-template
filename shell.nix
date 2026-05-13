@@ -3,8 +3,6 @@
 }:
 
 let
-  projectRoot = ./.;
-
   serve = pkgs.writeShellApplication {
     name = "serve";
 
@@ -13,9 +11,23 @@ let
     ];
 
     text = ''
-      pushd ${projectRoot} >/dev/null
-      marp --server . --watch
-      popd >/dev/null
+      find_root() {
+        local curdir="''${1:-$PWD}"
+        local flake="$curdir/flake.nix"
+
+        if [[ "$curdir" == "/" ]]; then
+          >&2 echo "ERROR: failed to find marp-deck-directory project root."
+          exit 1
+        fi
+
+        if [[ -f "$flake" ]] && grep -q 'description = "Marp Deck Directory"' "$flake" 2>/dev/null; then
+          echo "$curdir"
+        else
+          find_root "$(dirname "$curdir")"
+        fi
+      }
+
+      marp --server "$(find_root)" --watch
     '';
   };
 in
