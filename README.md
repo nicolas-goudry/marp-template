@@ -86,6 +86,8 @@ nix develop # or simply `cd` here if direnv is set up (see previous section)
 serve
 ```
 
+![Serve command](./.github/assets/serve-command.gif)
+
 Open [http://localhost:8080](http://localhost:8080): Marp serves an index of every deck under `slides/` and reloads on save.
 
 To create your first deck, drop a Markdown file under `slides/` (see [Authoring slides](#authoring-slides)) and the server picks it up instantly.
