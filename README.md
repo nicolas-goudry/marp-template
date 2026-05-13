@@ -297,17 +297,19 @@ Every deck is exposed as a passthru attribute under `slides`, mirroring its path
 
 ```bash
 # HTML only
-nix build .#slides.intro.html
+nix build '.#slides.intro.html'
 
 # PDF only
-nix build .#slides.intro.pdf
+nix build '.#slides.intro.pdf'
 
 # Cover PNG only
-nix build .#slides.intro.cover
+nix build '.#slides.intro.cover'
 
 # Nested deck
-nix build .#slides.2026.q4-keynote.pdf
+nix build '.#slides.2026.q4-keynote.pdf'
 ```
+
+![Build specific deck outputs](./.github/assets/nix-build-deck-outputs.gif)
 
 ### Live preview (no Nix build needed)
 
