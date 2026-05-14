@@ -111,9 +111,11 @@ let
         (lib.optionalString (isPDF || isCover) ''
           touch .marprc
           yq -i '. + {"options":{"emoji":{"twemoji":{"base":"${pathToRoot}assets/twemoji/"}}}}' .marprc
+          patchPathRegex='s|\([^.]\)/assets|\1${pathToRoot}assets|g; s|^/assets|${pathToRoot}assets|g'
+          sed -i "$patchPathRegex" slides/${infile}
           shopt -s globstar
           for css in **/*.css; do
-            sed -i 's|\([^.]\)/assets|\1${pathToRoot}assets|g; s|^/assets|${pathToRoot}assets|g' $css
+            sed -i "$patchPathRegex" $css
           done
         '')
         # HTML is rendered at root, so twemoji assets are at the same level.
