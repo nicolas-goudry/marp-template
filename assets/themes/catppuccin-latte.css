@@ -1,274 +1,478 @@
-/* https://highlightjs.readthedocs.io/en/latest/css-classes-reference.html */
 /*!
  * Soothing pastel theme for Marp / Marpit.
  *
  * @theme catppuccin-latte
- * @author Nicolas Goudry
+ * @author Catppuccin Org
  *
  * @auto-scaling true
  * @size 16:9 1280px 720px
  * @size 4:3 960px 720px
  */
-@import-theme "default";
-&.hljs {
+
+@import "default";
+
+/* Highlight.js */
+
+pre :where(.hljs) {
   color: #4c4f69;
   background: #eff1f5;
 }
 
-.hljs-keyword {
+pre :where(.hljs-keyword),
+pre :where(.hljs-variable),
+pre :where(.hljs-variable.language_),
+pre :where(.hljs-name),
+pre :where(.hljs-selector-attr) {
   color: #8839ef;
 }
 
-.hljs-built_in {
+pre :where(.hljs-built_in),
+pre :where(.hljs-doctag) {
   color: #d20f39;
 }
 
-.hljs-type {
+pre :where(.hljs-type),
+pre :where(.hljs-title.class_),
+pre :where(.hljs-selector-tag) {
   color: #df8e1d;
 }
 
-.hljs-literal {
+pre :where(.hljs-literal),
+pre :where(.hljs-number),
+pre :where(.hljs-variable.constant_),
+pre :where(.hljs-meta) {
   color: #fe640b;
 }
 
-.hljs-number {
-  color: #fe640b;
-}
-
-.hljs-operator {
+pre :where(.hljs-operator) {
   color: #04a5e5;
 }
 
-.hljs-punctuation {
+pre :where(.hljs-punctuation) {
   color: #5c5f77;
 }
 
-.hljs-property {
+pre :where(.hljs-property),
+pre :where(.hljs-tag),
+pre :where(.hljs-bullet),
+pre :where(.hljs-formula),
+pre :where(.hljs-selector-class),
+pre :where(.hljs-selector-pseudo) {
   color: #179299;
 }
 
-.hljs-regexp {
+pre :where(.hljs-regexp) {
   color: #ea76cb;
 }
 
-.hljs-string {
+pre :where(.hljs-string),
+pre :where(.hljs-char.escape_),
+pre :where(.hljs-attribute),
+pre :where(.hljs-code) {
   color: #40a02b;
 }
 
-.hljs-char.escape_ {
-  color: #40a02b;
-}
-
-.hljs-subst {
+pre :where(.hljs-subst) {
   color: #6c6f85;
 }
 
-.hljs-symbol {
+pre :where(.hljs-symbol),
+pre :where(.hljs-template-tag),
+pre :where(.hljs-template-variable) {
   color: #dd7878;
 }
 
-.hljs-variable {
-  color: #8839ef;
-}
-
-.hljs-variable.language_ {
-  color: #8839ef;
-}
-
-.hljs-variable.constant_ {
-  color: #fe640b;
-}
-
-.hljs-title {
+pre :where(.hljs-title),
+pre :where(.hljs-title.function_),
+pre :where(.hljs-section),
+pre :where(.hljs-attr),
+pre :where(.hljs-selector-id) {
   color: #1e66f5;
 }
 
-.hljs-title.class_ {
-  color: #df8e1d;
-}
-
-.hljs-title.function_ {
-  color: #1e66f5;
-}
-
-.hljs-params {
+pre :where(.hljs-params) {
   color: #4c4f69;
 }
 
-.hljs-comment {
+pre :where(.hljs-comment) {
   color: #7c7f93;
 }
 
-.hljs-doctag {
-  color: #d20f39;
-}
-
-.hljs-meta {
-  color: #fe640b;
-}
-
-.hljs-section {
-  color: #1e66f5;
-}
-
-.hljs-tag {
-  color: #179299;
-}
-
-.hljs-name {
-  color: #8839ef;
-}
-
-.hljs-attr {
-  color: #1e66f5;
-}
-
-.hljs-attribute {
-  color: #40a02b;
-}
-
-.hljs-bullet {
-  color: #179299;
-}
-
-.hljs-code {
-  color: #40a02b;
-}
-
-.hljs-emphasis {
+pre :where(.hljs-emphasis) {
   color: #d20f39;
   font-style: italic;
 }
 
-.hljs-strong {
+pre :where(.hljs-strong) {
   color: #d20f39;
   font-weight: bold;
 }
 
-.hljs-formula {
-  color: #179299;
-}
-
-.hljs-link {
+pre :where(.hljs-link) {
   color: #209fb5;
   font-style: italic;
 }
 
-.hljs-quote {
+pre :where(.hljs-quote) {
   color: #40a02b;
   font-style: italic;
 }
 
-.hljs-selector-tag {
-  color: #df8e1d;
-}
-
-.hljs-selector-id {
-  color: #1e66f5;
-}
-
-.hljs-selector-class {
-  color: #179299;
-}
-
-.hljs-selector-attr {
-  color: #8839ef;
-}
-
-.hljs-selector-pseudo {
-  color: #179299;
-}
-
-.hljs-template-tag {
-  color: #dd7878;
-}
-
-.hljs-template-variable {
-  color: #dd7878;
-}
-
-.hljs-addition {
+pre :where(.hljs-addition) {
   color: #40a02b;
   background: rgba(64, 160, 43, 0.15);
 }
 
-.hljs-deletion {
+pre :where(.hljs-deletion) {
   color: #d20f39;
   background: rgba(210, 15, 57, 0.15);
 }
 
 :root {
+  /* Color palette CSS variables */
+  --rosewater: #dc8a78;
+  --rosewater-10: rgba(220, 138, 120, 0.10);
+  --rosewater-20: rgba(220, 138, 120, 0.20);
+  --rosewater-30: rgba(220, 138, 120, 0.30);
+  --rosewater-40: rgba(220, 138, 120, 0.40);
+  --rosewater-50: rgba(220, 138, 120, 0.50);
+  --rosewater-60: rgba(220, 138, 120, 0.60);
+  --rosewater-70: rgba(220, 138, 120, 0.70);
+  --rosewater-80: rgba(220, 138, 120, 0.80);
+  --rosewater-90: rgba(220, 138, 120, 0.90);
+  --flamingo: #dd7878;
+  --flamingo-10: rgba(221, 120, 120, 0.10);
+  --flamingo-20: rgba(221, 120, 120, 0.20);
+  --flamingo-30: rgba(221, 120, 120, 0.30);
+  --flamingo-40: rgba(221, 120, 120, 0.40);
+  --flamingo-50: rgba(221, 120, 120, 0.50);
+  --flamingo-60: rgba(221, 120, 120, 0.60);
+  --flamingo-70: rgba(221, 120, 120, 0.70);
+  --flamingo-80: rgba(221, 120, 120, 0.80);
+  --flamingo-90: rgba(221, 120, 120, 0.90);
+  --pink: #ea76cb;
+  --pink-10: rgba(234, 118, 203, 0.10);
+  --pink-20: rgba(234, 118, 203, 0.20);
+  --pink-30: rgba(234, 118, 203, 0.30);
+  --pink-40: rgba(234, 118, 203, 0.40);
+  --pink-50: rgba(234, 118, 203, 0.50);
+  --pink-60: rgba(234, 118, 203, 0.60);
+  --pink-70: rgba(234, 118, 203, 0.70);
+  --pink-80: rgba(234, 118, 203, 0.80);
+  --pink-90: rgba(234, 118, 203, 0.90);
+  --mauve: #8839ef;
+  --mauve-10: rgba(136, 57, 239, 0.10);
+  --mauve-20: rgba(136, 57, 239, 0.20);
+  --mauve-30: rgba(136, 57, 239, 0.30);
+  --mauve-40: rgba(136, 57, 239, 0.40);
+  --mauve-50: rgba(136, 57, 239, 0.50);
+  --mauve-60: rgba(136, 57, 239, 0.60);
+  --mauve-70: rgba(136, 57, 239, 0.70);
+  --mauve-80: rgba(136, 57, 239, 0.80);
+  --mauve-90: rgba(136, 57, 239, 0.90);
+  --red: #d20f39;
+  --red-10: rgba(210, 15, 57, 0.10);
+  --red-20: rgba(210, 15, 57, 0.20);
+  --red-30: rgba(210, 15, 57, 0.30);
+  --red-40: rgba(210, 15, 57, 0.40);
+  --red-50: rgba(210, 15, 57, 0.50);
+  --red-60: rgba(210, 15, 57, 0.60);
+  --red-70: rgba(210, 15, 57, 0.70);
+  --red-80: rgba(210, 15, 57, 0.80);
+  --red-90: rgba(210, 15, 57, 0.90);
+  --maroon: #e64553;
+  --maroon-10: rgba(230, 69, 83, 0.10);
+  --maroon-20: rgba(230, 69, 83, 0.20);
+  --maroon-30: rgba(230, 69, 83, 0.30);
+  --maroon-40: rgba(230, 69, 83, 0.40);
+  --maroon-50: rgba(230, 69, 83, 0.50);
+  --maroon-60: rgba(230, 69, 83, 0.60);
+  --maroon-70: rgba(230, 69, 83, 0.70);
+  --maroon-80: rgba(230, 69, 83, 0.80);
+  --maroon-90: rgba(230, 69, 83, 0.90);
+  --peach: #fe640b;
+  --peach-10: rgba(254, 100, 11, 0.10);
+  --peach-20: rgba(254, 100, 11, 0.20);
+  --peach-30: rgba(254, 100, 11, 0.30);
+  --peach-40: rgba(254, 100, 11, 0.40);
+  --peach-50: rgba(254, 100, 11, 0.50);
+  --peach-60: rgba(254, 100, 11, 0.60);
+  --peach-70: rgba(254, 100, 11, 0.70);
+  --peach-80: rgba(254, 100, 11, 0.80);
+  --peach-90: rgba(254, 100, 11, 0.90);
+  --yellow: #df8e1d;
+  --yellow-10: rgba(223, 142, 29, 0.10);
+  --yellow-20: rgba(223, 142, 29, 0.20);
+  --yellow-30: rgba(223, 142, 29, 0.30);
+  --yellow-40: rgba(223, 142, 29, 0.40);
+  --yellow-50: rgba(223, 142, 29, 0.50);
+  --yellow-60: rgba(223, 142, 29, 0.60);
+  --yellow-70: rgba(223, 142, 29, 0.70);
+  --yellow-80: rgba(223, 142, 29, 0.80);
+  --yellow-90: rgba(223, 142, 29, 0.90);
+  --green: #40a02b;
+  --green-10: rgba(64, 160, 43, 0.10);
+  --green-20: rgba(64, 160, 43, 0.20);
+  --green-30: rgba(64, 160, 43, 0.30);
+  --green-40: rgba(64, 160, 43, 0.40);
+  --green-50: rgba(64, 160, 43, 0.50);
+  --green-60: rgba(64, 160, 43, 0.60);
+  --green-70: rgba(64, 160, 43, 0.70);
+  --green-80: rgba(64, 160, 43, 0.80);
+  --green-90: rgba(64, 160, 43, 0.90);
+  --teal: #179299;
+  --teal-10: rgba(23, 146, 153, 0.10);
+  --teal-20: rgba(23, 146, 153, 0.20);
+  --teal-30: rgba(23, 146, 153, 0.30);
+  --teal-40: rgba(23, 146, 153, 0.40);
+  --teal-50: rgba(23, 146, 153, 0.50);
+  --teal-60: rgba(23, 146, 153, 0.60);
+  --teal-70: rgba(23, 146, 153, 0.70);
+  --teal-80: rgba(23, 146, 153, 0.80);
+  --teal-90: rgba(23, 146, 153, 0.90);
+  --sky: #04a5e5;
+  --sky-10: rgba(4, 165, 229, 0.10);
+  --sky-20: rgba(4, 165, 229, 0.20);
+  --sky-30: rgba(4, 165, 229, 0.30);
+  --sky-40: rgba(4, 165, 229, 0.40);
+  --sky-50: rgba(4, 165, 229, 0.50);
+  --sky-60: rgba(4, 165, 229, 0.60);
+  --sky-70: rgba(4, 165, 229, 0.70);
+  --sky-80: rgba(4, 165, 229, 0.80);
+  --sky-90: rgba(4, 165, 229, 0.90);
+  --sapphire: #209fb5;
+  --sapphire-10: rgba(32, 159, 181, 0.10);
+  --sapphire-20: rgba(32, 159, 181, 0.20);
+  --sapphire-30: rgba(32, 159, 181, 0.30);
+  --sapphire-40: rgba(32, 159, 181, 0.40);
+  --sapphire-50: rgba(32, 159, 181, 0.50);
+  --sapphire-60: rgba(32, 159, 181, 0.60);
+  --sapphire-70: rgba(32, 159, 181, 0.70);
+  --sapphire-80: rgba(32, 159, 181, 0.80);
+  --sapphire-90: rgba(32, 159, 181, 0.90);
+  --blue: #1e66f5;
+  --blue-10: rgba(30, 102, 245, 0.10);
+  --blue-20: rgba(30, 102, 245, 0.20);
+  --blue-30: rgba(30, 102, 245, 0.30);
+  --blue-40: rgba(30, 102, 245, 0.40);
+  --blue-50: rgba(30, 102, 245, 0.50);
+  --blue-60: rgba(30, 102, 245, 0.60);
+  --blue-70: rgba(30, 102, 245, 0.70);
+  --blue-80: rgba(30, 102, 245, 0.80);
+  --blue-90: rgba(30, 102, 245, 0.90);
+  --lavender: #7287fd;
+  --lavender-10: rgba(114, 135, 253, 0.10);
+  --lavender-20: rgba(114, 135, 253, 0.20);
+  --lavender-30: rgba(114, 135, 253, 0.30);
+  --lavender-40: rgba(114, 135, 253, 0.40);
+  --lavender-50: rgba(114, 135, 253, 0.50);
+  --lavender-60: rgba(114, 135, 253, 0.60);
+  --lavender-70: rgba(114, 135, 253, 0.70);
+  --lavender-80: rgba(114, 135, 253, 0.80);
+  --lavender-90: rgba(114, 135, 253, 0.90);
+  --text: #4c4f69;
+  --text-10: rgba(76, 79, 105, 0.10);
+  --text-20: rgba(76, 79, 105, 0.20);
+  --text-30: rgba(76, 79, 105, 0.30);
+  --text-40: rgba(76, 79, 105, 0.40);
+  --text-50: rgba(76, 79, 105, 0.50);
+  --text-60: rgba(76, 79, 105, 0.60);
+  --text-70: rgba(76, 79, 105, 0.70);
+  --text-80: rgba(76, 79, 105, 0.80);
+  --text-90: rgba(76, 79, 105, 0.90);
+  --subtext1: #5c5f77;
+  --subtext1-10: rgba(92, 95, 119, 0.10);
+  --subtext1-20: rgba(92, 95, 119, 0.20);
+  --subtext1-30: rgba(92, 95, 119, 0.30);
+  --subtext1-40: rgba(92, 95, 119, 0.40);
+  --subtext1-50: rgba(92, 95, 119, 0.50);
+  --subtext1-60: rgba(92, 95, 119, 0.60);
+  --subtext1-70: rgba(92, 95, 119, 0.70);
+  --subtext1-80: rgba(92, 95, 119, 0.80);
+  --subtext1-90: rgba(92, 95, 119, 0.90);
+  --subtext0: #6c6f85;
+  --subtext0-10: rgba(108, 111, 133, 0.10);
+  --subtext0-20: rgba(108, 111, 133, 0.20);
+  --subtext0-30: rgba(108, 111, 133, 0.30);
+  --subtext0-40: rgba(108, 111, 133, 0.40);
+  --subtext0-50: rgba(108, 111, 133, 0.50);
+  --subtext0-60: rgba(108, 111, 133, 0.60);
+  --subtext0-70: rgba(108, 111, 133, 0.70);
+  --subtext0-80: rgba(108, 111, 133, 0.80);
+  --subtext0-90: rgba(108, 111, 133, 0.90);
+  --overlay2: #7c7f93;
+  --overlay2-10: rgba(124, 127, 147, 0.10);
+  --overlay2-20: rgba(124, 127, 147, 0.20);
+  --overlay2-30: rgba(124, 127, 147, 0.30);
+  --overlay2-40: rgba(124, 127, 147, 0.40);
+  --overlay2-50: rgba(124, 127, 147, 0.50);
+  --overlay2-60: rgba(124, 127, 147, 0.60);
+  --overlay2-70: rgba(124, 127, 147, 0.70);
+  --overlay2-80: rgba(124, 127, 147, 0.80);
+  --overlay2-90: rgba(124, 127, 147, 0.90);
+  --overlay1: #8c8fa1;
+  --overlay1-10: rgba(140, 143, 161, 0.10);
+  --overlay1-20: rgba(140, 143, 161, 0.20);
+  --overlay1-30: rgba(140, 143, 161, 0.30);
+  --overlay1-40: rgba(140, 143, 161, 0.40);
+  --overlay1-50: rgba(140, 143, 161, 0.50);
+  --overlay1-60: rgba(140, 143, 161, 0.60);
+  --overlay1-70: rgba(140, 143, 161, 0.70);
+  --overlay1-80: rgba(140, 143, 161, 0.80);
+  --overlay1-90: rgba(140, 143, 161, 0.90);
+  --overlay0: #9ca0b0;
+  --overlay0-10: rgba(156, 160, 176, 0.10);
+  --overlay0-20: rgba(156, 160, 176, 0.20);
+  --overlay0-30: rgba(156, 160, 176, 0.30);
+  --overlay0-40: rgba(156, 160, 176, 0.40);
+  --overlay0-50: rgba(156, 160, 176, 0.50);
+  --overlay0-60: rgba(156, 160, 176, 0.60);
+  --overlay0-70: rgba(156, 160, 176, 0.70);
+  --overlay0-80: rgba(156, 160, 176, 0.80);
+  --overlay0-90: rgba(156, 160, 176, 0.90);
+  --surface2: #acb0be;
+  --surface2-10: rgba(172, 176, 190, 0.10);
+  --surface2-20: rgba(172, 176, 190, 0.20);
+  --surface2-30: rgba(172, 176, 190, 0.30);
+  --surface2-40: rgba(172, 176, 190, 0.40);
+  --surface2-50: rgba(172, 176, 190, 0.50);
+  --surface2-60: rgba(172, 176, 190, 0.60);
+  --surface2-70: rgba(172, 176, 190, 0.70);
+  --surface2-80: rgba(172, 176, 190, 0.80);
+  --surface2-90: rgba(172, 176, 190, 0.90);
+  --surface1: #bcc0cc;
+  --surface1-10: rgba(188, 192, 204, 0.10);
+  --surface1-20: rgba(188, 192, 204, 0.20);
+  --surface1-30: rgba(188, 192, 204, 0.30);
+  --surface1-40: rgba(188, 192, 204, 0.40);
+  --surface1-50: rgba(188, 192, 204, 0.50);
+  --surface1-60: rgba(188, 192, 204, 0.60);
+  --surface1-70: rgba(188, 192, 204, 0.70);
+  --surface1-80: rgba(188, 192, 204, 0.80);
+  --surface1-90: rgba(188, 192, 204, 0.90);
+  --surface0: #ccd0da;
+  --surface0-10: rgba(204, 208, 218, 0.10);
+  --surface0-20: rgba(204, 208, 218, 0.20);
+  --surface0-30: rgba(204, 208, 218, 0.30);
+  --surface0-40: rgba(204, 208, 218, 0.40);
+  --surface0-50: rgba(204, 208, 218, 0.50);
+  --surface0-60: rgba(204, 208, 218, 0.60);
+  --surface0-70: rgba(204, 208, 218, 0.70);
+  --surface0-80: rgba(204, 208, 218, 0.80);
+  --surface0-90: rgba(204, 208, 218, 0.90);
+  --base: #eff1f5;
+  --base-10: rgba(239, 241, 245, 0.10);
+  --base-20: rgba(239, 241, 245, 0.20);
+  --base-30: rgba(239, 241, 245, 0.30);
+  --base-40: rgba(239, 241, 245, 0.40);
+  --base-50: rgba(239, 241, 245, 0.50);
+  --base-60: rgba(239, 241, 245, 0.60);
+  --base-70: rgba(239, 241, 245, 0.70);
+  --base-80: rgba(239, 241, 245, 0.80);
+  --base-90: rgba(239, 241, 245, 0.90);
+  --mantle: #e6e9ef;
+  --mantle-10: rgba(230, 233, 239, 0.10);
+  --mantle-20: rgba(230, 233, 239, 0.20);
+  --mantle-30: rgba(230, 233, 239, 0.30);
+  --mantle-40: rgba(230, 233, 239, 0.40);
+  --mantle-50: rgba(230, 233, 239, 0.50);
+  --mantle-60: rgba(230, 233, 239, 0.60);
+  --mantle-70: rgba(230, 233, 239, 0.70);
+  --mantle-80: rgba(230, 233, 239, 0.80);
+  --mantle-90: rgba(230, 233, 239, 0.90);
+  --crust: #dce0e8;
+  --crust-10: rgba(220, 224, 232, 0.10);
+  --crust-20: rgba(220, 224, 232, 0.20);
+  --crust-30: rgba(220, 224, 232, 0.30);
+  --crust-40: rgba(220, 224, 232, 0.40);
+  --crust-50: rgba(220, 224, 232, 0.50);
+  --crust-60: rgba(220, 224, 232, 0.60);
+  --crust-70: rgba(220, 224, 232, 0.70);
+  --crust-80: rgba(220, 224, 232, 0.80);
+  --crust-90: rgba(220, 224, 232, 0.90);
+
   /* github-markdown-css variables */
   --bgColor-attention-muted: rgba(254, 100, 11, 0.15);
-  --bgColor-default: #eff1f5;
-  --bgColor-muted: #ccd0da;
-  --bgColor-neutral-muted: #9ca0b0;
-  --borderColor-accent-emphasis: #d20f39;
-  --borderColor-attention-emphasis: #fe640b;
-  --borderColor-danger-emphasis: #d20f39;
-  --borderColor-default: #ccd0da;
-  --borderColor-done-emphasis: #8839ef;
-  --borderColor-muted: #ccd0da;
-  --borderColor-success-emphasis: #40a02b;
-  --fgColor-accent: #d20f39;
-  --fgColor-attention: #df8e1d;
-  --fgColor-danger: #d20f39;
-  --fgColor-default: #4c4f69;
-  --fgColor-done: #8839ef;
-  --fgColor-muted: #5c5f77;
-  --fgColor-success: #40a02b;
+  --bgColor-default: var(--base);
+  --bgColor-muted: var(--surface0);
+  --bgColor-neutral-muted: var(--overlay0);
+  --borderColor-accent-emphasis: var(--red);
+  --borderColor-attention-emphasis: var(--peach);
+  --borderColor-danger-emphasis: var(--red);
+  --borderColor-default: var(--surface0);
+  --borderColor-done-emphasis: var(--mauve);
+  --borderColor-muted: var(--surface0);
+  --borderColor-success-emphasis: var(--green);
+  --fgColor-accent: var(--red);
+  --fgColor-attention: var(--yellow);
+  --fgColor-danger: var(--red);
+  --fgColor-default: var(--text);
+  --fgColor-done: var(--mauve);
+  --fgColor-muted: var(--subtext1);
+  --fgColor-success: var(--green);
+
   /* Marp default theme variables */
-  --h1-color: #d20f39;
-  --header-footer-color: #bcc0cc;
-  --heading-strong-color: #d20f39;
-  --paginate-color: #9ca0b0;
+  --h1-color: var(--red);
+  --header-footer-color: var(--surface1);
+  --heading-strong-color: var(--red);
+  --paginate-color: var(--overlay0);
 }
 
 section h1 {
-  color: #d20f39;
+  color: var(--red);
 }
+
 section h2 {
-  color: #fe640b;
+  color: var(--peach);
 }
+
 section h3 {
-  color: #df8e1d;
+  color: var(--yellow);
 }
+
 section h4 {
-  color: #40a02b;
+  color: var(--green);
 }
+
 section h5 {
-  color: #209fb5;
+  color: var(--sapphire);
 }
+
 section h6 {
-  color: #7287fd;
+  color: var(--lavender);
 }
+
 section a {
-  color: #1e66f5;
+  color: var(--blue);
 }
+
 section table thead th {
   background: var(--bgColor-muted);
   color: var(--fgColor-muted);
 }
+
 section table tbody > tr:nth-child(2n) td,
 section table tbody > tr:nth-child(2n) th {
   background: var(--bgColor-default);
   color: var(--fgColor-default);
 }
+
 section .markdown-alert.markdown-alert-note {
-  border-left-color: #1e66f5;
+  border-left-color: var(--blue);
 }
+
 section .markdown-alert.markdown-alert-note .markdown-alert-title {
-  color: #1e66f5;
+  color: var(--blue);
 }
-section {
-  /* Lead class taken from Marp builtin Gaia theme */
-}
+
+/* Lead class taken from Marp builtin Gaia theme */
 section:where(.lead) {
   place-content: safe center center;
   /* Definitions for classic behavior: Users can adopt flex centering by tweaking style `section.lead { display: flex }` */
   flex-flow: column nowrap;
   align-items: stretch;
 }
+
 section:where(.lead) h1,
 section:where(.lead) h2,
 section:where(.lead) h3,
@@ -277,12 +481,11 @@ section:where(.lead) h5,
 section:where(.lead) h6 {
   text-align: center;
 }
-section:where(.lead) {
-  /* stylelint-disable-next-line no-descending-specificity */
-}
+
 section:where(.lead) p {
   text-align: center;
 }
+
 section:where(.lead) blockquote > h1,
 section:where(.lead) blockquote > h2,
 section:where(.lead) blockquote > h3,
@@ -292,10 +495,12 @@ section:where(.lead) blockquote > h6,
 section:where(.lead) blockquote > p {
   text-align: left;
 }
+
 section:where(.lead) ul > li > p,
 section:where(.lead) ol > li > p {
   text-align: left;
 }
+
 section:where(.lead) table {
   margin-left: auto;
   margin-right: auto;
